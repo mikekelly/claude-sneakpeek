@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.1.1] - 2025-01-04
+
+### Fixed
+
+- Mirror and CCRouter providers no longer prompt for API key (they use OAuth or optional keys)
+- Cleaned up CLI output formatting
+
+### Removed
+
+- Removed Twitter/X share URL from create output
+
 ## [1.1.0] - 2025-01-04
 
 ### Added
