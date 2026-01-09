@@ -256,7 +256,7 @@ export CLAUDE_CONFIG_DIR="$HOME/.cc-mirror/zai/config"
 exec "$HOME/.cc-mirror/zai/npm/node_modules/.bin/claude" "$@"
 ```
 
-On Windows, the wrapper is `<bin-dir>\\zai.cmd` with a sibling `<bin-dir>\\zai.mjs` launcher script.
+On Windows, the wrapper is `<bin-dir>\\zai.cmd` with a sibling `<bin-dir>\\zai.mjs` launcher script. Add `%USERPROFILE%\\.cc-mirror\\bin` to `PATH` to run wrappers without a full path.
 
 ---
 

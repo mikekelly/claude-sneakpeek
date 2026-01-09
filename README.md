@@ -115,6 +115,8 @@ Each variant is completely isolated — its own config, sessions, MCP servers, a
 
 Default `<bin-dir>` is `~/.local/bin` on macOS/Linux and `~/.cc-mirror/bin` on Windows.
 
+**Windows tip:** add `%USERPROFILE%\\.cc-mirror\\bin` to your `PATH`, or run the `<variant>.cmd` wrapper directly. Each wrapper has a sibling `<variant>.mjs` launcher.
+
 ---
 
 ## Providers

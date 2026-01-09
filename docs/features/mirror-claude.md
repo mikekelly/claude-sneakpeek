@@ -175,6 +175,8 @@ mclaude
 
 Default `<bin-dir>` is `~/.local/bin` on macOS/Linux and `~/.cc-mirror/bin` on Windows.
 
+**Windows tip:** add `%USERPROFILE%\\.cc-mirror\\bin` to `PATH` (wrapper is `<variant>.cmd` with a sibling `<variant>.mjs` launcher).
+
 ### What Mirror Sets
 
 ```json

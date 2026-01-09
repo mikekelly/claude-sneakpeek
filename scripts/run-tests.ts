@@ -49,7 +49,11 @@ if (testFiles.length === 0) {
 testFiles.sort((a: string, b: string) => a.localeCompare(b));
 
 const passThroughArgs: string[] = process.argv.slice(2);
-const nodeArgs: string[] = ['--test', '--import', 'tsx', ...passThroughArgs, ...testFiles];
+const nodeArgs: string[] = ['--test', '--import', 'tsx'];
+if (!passThroughArgs.some((arg) => arg === '--test-concurrency' || arg.startsWith('--test-concurrency='))) {
+  nodeArgs.push('--test-concurrency=1');
+}
+nodeArgs.push(...passThroughArgs, ...testFiles);
 
 const child = spawn(process.execPath, nodeArgs, { stdio: 'inherit' });
 child.on('exit', (code, signal) => {

@@ -2,6 +2,22 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.6.3] - 2026-01-09
+
+### Added
+
+- Task command coverage for `tasks show`, `tasks update`, and `tasks clean` (JSON output + filters).
+
+### Changed
+
+- Test runner defaults to serial execution (unless `--test-concurrency` is provided) to reduce flaky Ink/TUI runs.
+- E2E flows now use real npm installs; update tests verify `variant.json` timestamps and settings-only updates preserve the CLI.
+- TUI tests wait for async updates to complete before assertions.
+
+### Documentation
+
+- Windows PATH guidance for wrapper scripts added to user-facing docs.
+
 ## [1.5.0] - 2025-01-06
 
 ### Changed
