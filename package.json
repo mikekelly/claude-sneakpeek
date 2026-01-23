@@ -1,6 +1,6 @@
 {
   "name": "@realmikekelly/claude-sneakpeek",
-  "version": "1.6.7",
+  "version": "1.6.8",
   "type": "module",
   "description": "Unlock feature-flagged capabilities in Claude Code",
   "author": "realmikekelly",
