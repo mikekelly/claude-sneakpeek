@@ -2,6 +2,8 @@
 
 Get a parallel build of Claude Code that unlocks feature-flagged capabilities like swarm mode.
 
+Demo video of swarm mode in action: https://x.com/NicerInPerson/status/2014989679796347375
+
 This installs a completely isolated instance of Claude Code—separate config, sessions, MCP servers, and credentials. Your existing Claude Code installation is untouched.
 
 ## Install
