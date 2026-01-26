@@ -5,6 +5,7 @@
 import { listProviders, getProvider, type ProviderTemplate } from '../../providers/index.js';
 import { listBrandPresets } from '../../brands/index.js';
 import * as core from '../../core/index.js';
+import { parseMcpPresets, listMcpPresets, validateMcpPresets } from '../../core/mcp-presets/index.js';
 import type { ParsedArgs } from '../args.js';
 import { prompt } from '../prompt.js';
 import {
@@ -35,6 +36,7 @@ interface CreateParams {
   requiresCredential: boolean;
   shouldPromptApiKey: boolean;
   hasZaiEnv: boolean;
+  mcpPresets: string[];
 }
 
 /**
@@ -78,6 +80,19 @@ async function prepareCreateParams(opts: ParsedArgs, quickMode = false): Promise
   const shouldPromptApiKey =
     !provider.credentialOptional && !opts.yes && !hasApiKeyFlag && (providerKey === 'zai' ? !hasZaiEnv : !apiKey);
 
+  // Parse and validate MCP presets
+  const mcpPresetsArg = opts['mcp-presets'] as string | undefined;
+  const mcpPresets = parseMcpPresets(mcpPresetsArg);
+  if (mcpPresetsArg) {
+    const { unknown } = validateMcpPresets(mcpPresetsArg.split(',').map((k) => k.trim()));
+    if (unknown.length > 0) {
+      const available = listMcpPresets()
+        .map((p) => p.key)
+        .join(', ');
+      console.log(`Warning: Unknown MCP preset(s): ${unknown.join(', ')}. Available: ${available}`);
+    }
+  }
+
   return {
     provider,
     providerKey,
@@ -92,6 +107,7 @@ async function prepareCreateParams(opts: ParsedArgs, quickMode = false): Promise
     requiresCredential,
     shouldPromptApiKey,
     hasZaiEnv,
+    mcpPresets,
   };
 }
 
@@ -150,6 +166,7 @@ async function handleQuickMode(opts: ParsedArgs, params: CreateParams): Promise<
     skillUpdate,
     modelOverrides: resolvedModelOverrides,
     enableTeamMode,
+    mcpPresets: params.mcpPresets,
     tweakccStdio: 'pipe',
   });
 
@@ -241,6 +258,7 @@ async function handleInteractiveMode(opts: ParsedArgs, params: CreateParams): Pr
     skillUpdate,
     modelOverrides: resolvedModelOverrides,
     enableTeamMode,
+    mcpPresets: params.mcpPresets,
     tweakccStdio: 'pipe',
   });
 
@@ -290,6 +308,7 @@ async function handleNonInteractiveMode(opts: ParsedArgs, params: CreateParams):
     skillUpdate,
     modelOverrides: resolvedModelOverrides,
     enableTeamMode,
+    mcpPresets: params.mcpPresets,
     tweakccStdio: 'pipe',
   });
 

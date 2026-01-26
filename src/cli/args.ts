@@ -16,6 +16,7 @@ export interface ParsedArgs {
   ['enable-team-mode']?: boolean;
   ['disable-team-mode']?: boolean;
   ['tweakcc-stdio']?: string;
+  ['mcp-presets']?: string;
   verbose?: boolean;
   [key: string]: string | boolean | string[] | undefined;
 }

@@ -1,6 +1,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { readJson, writeJson } from './fs.js';
+import { getMcpPreset, getMcpServerName, type McpServerConfig as McpPresetServerConfig } from './mcp-presets/index.js';
 
 type ClaudeConfig = {
   customApiKeyResponses?: {
@@ -243,4 +244,64 @@ export const ensureMinimaxMcpServer = (configDir: string, apiKey?: string | null
 
   writeJson(configPath, next);
   return true;
+};
+
+/**
+ * Add an MCP preset server to .claude.json
+ * @returns true if a new server was added, false if already present
+ */
+export const ensureMcpPreset = (configDir: string, presetKey: string): boolean => {
+  const preset = getMcpPreset(presetKey);
+  if (!preset) return false;
+
+  const configPath = path.join(configDir, CLAUDE_CONFIG_FILE);
+  const exists = fs.existsSync(configPath);
+
+  let config: ClaudeConfig | null = null;
+  if (exists) {
+    config = readJson<ClaudeConfig>(configPath);
+    if (!config) return false;
+  } else {
+    config = {};
+  }
+
+  const existingServers = config.mcpServers ?? {};
+  const serverName = getMcpServerName(presetKey);
+
+  // Already configured
+  if (existingServers[serverName]) return false;
+
+  const mcpServer: McpServerConfig = {
+    command: preset.server.command,
+    args: preset.server.args,
+  };
+
+  if (preset.server.env) {
+    mcpServer.env = preset.server.env;
+  }
+
+  const next: ClaudeConfig = {
+    ...config,
+    mcpServers: {
+      ...existingServers,
+      [serverName]: mcpServer,
+    },
+  };
+
+  writeJson(configPath, next);
+  return true;
+};
+
+/**
+ * Add multiple MCP preset servers to .claude.json
+ * @returns array of preset keys that were added
+ */
+export const ensureMcpPresets = (configDir: string, presetKeys: string[]): string[] => {
+  const added: string[] = [];
+  for (const key of presetKeys) {
+    if (ensureMcpPreset(configDir, key)) {
+      added.push(key);
+    }
+  }
+  return added;
 };

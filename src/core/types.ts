@@ -25,6 +25,8 @@ export interface VariantMeta {
   teamModeEnabled?: boolean;
   /** Whether swarm mode is enabled (native multi-agent features) */
   swarmModeEnabled?: boolean;
+  /** MCP presets installed (codex, gemini, etc.) */
+  mcpPresets?: string[];
 }
 
 export interface VariantEntry {
@@ -63,6 +65,8 @@ export interface CreateVariantParams {
   enableTeamMode?: boolean;
   /** Disable swarm mode (native multi-agent features are enabled by default) */
   disableSwarmMode?: boolean;
+  /** MCP presets to install (codex, gemini) */
+  mcpPresets?: string[];
   /** Callback for progress updates during installation */
   onProgress?: ProgressCallback;
 }

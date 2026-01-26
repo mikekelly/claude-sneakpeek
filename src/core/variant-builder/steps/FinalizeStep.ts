@@ -52,6 +52,7 @@ export class FinalizeStep implements BuildStep {
       npmVersion: prefs.resolvedNpmVersion,
       teamModeEnabled,
       swarmModeEnabled,
+      mcpPresets: params.mcpPresets?.length ? params.mcpPresets : undefined,
     };
 
     writeJson(path.join(paths.variantDir, 'variant.json'), meta);

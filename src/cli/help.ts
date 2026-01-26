@@ -44,12 +44,17 @@ OPTIONS (advanced)
   --model-sonnet <name>        Default Sonnet model
   --model-opus <name>          Default Opus model
   --model-haiku <name>         Default Haiku model
+  --mcp-presets <list>         MCP servers to install: codex,gemini
   --root <path>                Variants root (default: ${DEFAULT_ROOT})
   --bin-dir <path>             Wrapper install dir (default: ${DEFAULT_BIN_DIR})
   --no-tweak                   Skip tweakcc theming
   --no-prompt-pack             Skip provider prompt pack
   --shell-env                  Write env vars to shell profile
   --verbose                    Show full tweakcc output during update
+
+MCP PRESETS (consultation tools)
+  codex         OpenAI Codex subagent (spawn_agent, spawn_agents_parallel)
+  gemini        Google Gemini CLI (ask-gemini, sandbox-test)
 
 PROVIDERS
   mirror        Pure Claude (recommended)

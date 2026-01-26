@@ -33,6 +33,12 @@ export {
 };
 export { expandTilde } from './paths.js';
 
+// Teams module
+export * from './teams/index.js';
+
+// MCP presets module
+export * from './mcp-presets/index.js';
+
 export const createVariant = (params: CreateVariantParams): CreateVariantResult => {
   return new VariantBuilder(false).build(params);
 };

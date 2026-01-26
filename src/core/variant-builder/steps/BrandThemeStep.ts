@@ -3,8 +3,9 @@
  */
 
 import { getBrandThemeId, resolveBrandKey } from '../../../brands/index.js';
-import { ensureMinimaxMcpServer, ensureOnboardingState, ensureZaiMcpDeny } from '../../claude-config.js';
+import { ensureMinimaxMcpServer, ensureMcpPresets, ensureOnboardingState, ensureZaiMcpDeny } from '../../claude-config.js';
 import { ensureTweakccConfig } from '../../tweakcc.js';
+import { getMcpPreset } from '../../mcp-presets/index.js';
 import type { BuildContext, BuildStep } from '../types.js';
 
 export class BrandThemeStep implements BuildStep {
@@ -61,6 +62,20 @@ export class BrandThemeStep implements BuildStep {
       const blockedZaiTools = ensureZaiMcpDeny(paths.configDir);
       if (blockedZaiTools) {
         state.notes.push('Blocked Z.ai-injected MCP tools in settings.json.');
+      }
+    }
+
+    // Configure MCP presets (codex, gemini, etc.)
+    if (params.mcpPresets && params.mcpPresets.length > 0) {
+      const addedPresets = ensureMcpPresets(paths.configDir, params.mcpPresets);
+      for (const presetKey of addedPresets) {
+        const preset = getMcpPreset(presetKey);
+        if (preset) {
+          state.notes.push(`Configured ${preset.label} MCP server.`);
+          if (preset.warning) {
+            state.notes.push(`  Warning: ${preset.warning}`);
+          }
+        }
       }
     }
 
