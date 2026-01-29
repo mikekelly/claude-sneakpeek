@@ -4,8 +4,6 @@ import { spawn, spawnSync } from 'node:child_process';
 import { commandExists } from './paths.js';
 
 const npmCommand = 'npm';
-const npmShell = process.platform === 'win32';
-
 const NPM_PACKAGE_PATTERN = /^(?:@[\w.-]+\/)?[\w.-]+$/;
 const NPM_VERSION_PATTERN = /^[A-Za-z0-9][A-Za-z0-9._+-]*$/;
 
@@ -27,19 +25,6 @@ const assertSafeNpmInputs = (npmPackage: string, npmVersion: string) => {
   assertValidNpmVersion(npmVersion);
 };
 
-const quoteCmdArg = (value: string) => {
-  if (value.length === 0) return '""';
-  if (value.includes('"')) {
-    throw new Error(`Invalid value "${value}". Double quotes are not supported.`);
-  }
-  return `"${value}"`;
-};
-
-const buildWindowsNpmCommand = (npmDir: string, pkgSpec: string) => {
-  const args = ['install', '--prefix', npmDir, '--no-save', pkgSpec];
-  return [npmCommand, ...args.map(quoteCmdArg)].join(' ');
-};
-
 export const resolveNpmCliPath = (npmDir: string, npmPackage: string): string => {
   const packageParts = npmPackage.split('/');
   return path.join(npmDir, 'node_modules', ...packageParts, 'cli.js');
@@ -59,16 +44,15 @@ export const installNpmClaude = (params: {
   const stdio = params.stdio ?? 'inherit';
   const pkgSpec = params.npmVersion ? `${params.npmPackage}@${params.npmVersion}` : params.npmPackage;
   const npmArgs = ['install', '--prefix', params.npmDir, '--no-save', pkgSpec];
-  const result = npmShell
-    ? spawnSync(buildWindowsNpmCommand(params.npmDir, pkgSpec), {
-        stdio: 'pipe',
-        encoding: 'utf8',
-        shell: true,
-      })
-    : spawnSync(npmCommand, npmArgs, {
-        stdio: 'pipe',
-        encoding: 'utf8',
-      });
+
+  // SECURITY: Use array form without shell to prevent command injection
+  // Previously used shell:true on Windows which allowed arbitrary command execution
+  // if npmDir or pkgSpec contained shell metacharacters
+  const result = spawnSync(npmCommand, npmArgs, {
+    stdio: 'pipe',
+    encoding: 'utf8',
+    shell: false, // SAFE: no shell interpretation
+  });
 
   if (stdio === 'inherit') {
     if (result.stdout) process.stdout.write(result.stdout);
@@ -114,14 +98,12 @@ export const installNpmClaudeAsync = (params: {
     const stdio = params.stdio ?? 'inherit';
     const pkgSpec = params.npmVersion ? `${params.npmPackage}@${params.npmVersion}` : params.npmPackage;
     const npmArgs = ['install', '--prefix', params.npmDir, '--no-save', pkgSpec];
-    const child = npmShell
-      ? spawn(buildWindowsNpmCommand(params.npmDir, pkgSpec), {
-          stdio: 'pipe',
-          shell: true,
-        })
-      : spawn(npmCommand, npmArgs, {
-          stdio: 'pipe',
-        });
+
+    // SECURITY: Use array form without shell to prevent command injection
+    const child = spawn(npmCommand, npmArgs, {
+      stdio: 'pipe',
+      shell: false, // SAFE: no shell interpretation
+    });
 
     let stdout = '';
     let stderr = '';
